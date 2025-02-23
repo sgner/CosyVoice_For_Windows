@@ -83,7 +83,7 @@ def generate_audio(mode, tts_text, spk_id, spk_customize, prompt_text, prompt_sp
     stream = stream == "True"
     if mode == '预训练音色':
         if spk_customize != "无" and not os.path.exists(f"{ROOT_DIR}/output/{user_id}/{spk_customize}.pt"):
-            aliyun_oss.download_file(f"{user_id}/model/cosyvoice/{spk_customize}.pt",
+            aliyun_oss.download_file(f"learn-wave/{user_id}/model/cosyvoice/{spk_customize}.pt",
                                      f"{ROOT_DIR}/output/{user_id}/{spk_customize}.pt")
         if stream:
             def generate():
@@ -92,20 +92,21 @@ def generate_audio(mode, tts_text, spk_id, spk_customize, prompt_text, prompt_sp
                     buffer = io.BytesIO()
                     tts_speeches.append(j['tts_speech'])
                     audio_data = torch.concat(tts_speeches, dim=1)
-                    torchaudio.save(buffer, audio_data, target_sr, format="ogg")
+                    torchaudio.set_audio_backend("ffmpeg")
+                    torchaudio.save(buffer, audio_data, target_sr, format="mp3")
                     buffer.seek(0)
                     yield buffer.read()
                 delete_all_files_in_folder(f"{ROOT_DIR}/output/{user_id}")
 
             response = make_response(generate())
-            response.headers['Content-Type'] = 'audio/ogg'
-            response.headers['Content-Disposition'] = 'inline; filename=sound.ogg'
+            response.headers['Content-Type'] = 'audio/mpeg'
+            response.headers['Content-Disposition'] = 'inline; filename=sound.mp3'
             print(response)
             return response
         else:
             buffer = io.BytesIO()
             tts_speeches = []
-            for i, j in enumerate(cosyvoice.inference_sft(tts_text, spk_id, stream, speed, spk_customize)):
+            for i, j in enumerate(cosyvoice.inference_sft(tts_text, spk_id, stream, speed, spk_customize,user_id)):
                 tts_speeches.append(j['tts_speech'])
             audio_data = torch.concat(tts_speeches, dim=1)
             torchaudio.save(buffer, audio_data, target_sr, format="wav")
@@ -134,11 +135,11 @@ def generate_audio(mode, tts_text, spk_id, spk_customize, prompt_text, prompt_sp
                     buffer = io.BytesIO()
                     tts_speeches.append(j['tts_speech'])
                     audio_data = torch.concat(tts_speeches, dim=1)
-                    torchaudio.save(buffer, audio_data, target_sr, format="ogg")
+                    torchaudio.save(buffer, audio_data, target_sr, format="mp3")
                     buffer.seek(0)
                     yield buffer.read()
                 try:
-                    aliyun_oss.upload_file(f"{user_id}/model/cosyvoice/{exp_name}.pt",
+                    aliyun_oss.upload_file(f"learn-wave/{user_id}/model/cosyvoice/{exp_name}.pt",
                                            f"{ROOT_DIR}/{file_path}/{exp_name}.pt")
                     delete_all_files_in_folder(f"{ROOT_DIR}/{file_path}")
                     last_index_ = audio_file.rfind('/')
@@ -149,9 +150,9 @@ def generate_audio(mode, tts_text, spk_id, spk_customize, prompt_text, prompt_sp
                     print(e)
 
             response = make_response(generate())
-            response.headers['Content-Type'] = 'audio/ogg'
+            response.headers['Content-Type'] = 'audio/mpeg'
             # response.headers['Content-Disposition'] = 'attachment; filename=sound.ogg'
-            response.headers['Content-Disposition'] = 'inline; filename=sound.ogg'
+            response.headers['Content-Disposition'] = 'inline; filename=sound.mp3'
             return response
         else:
             buffer = io.BytesIO()
@@ -162,7 +163,7 @@ def generate_audio(mode, tts_text, spk_id, spk_customize, prompt_text, prompt_sp
             audio_data = torch.concat(tts_speeches, dim=1)
             torchaudio.save(buffer, audio_data, target_sr, format="wav")
             buffer.seek(0)
-            aliyun_oss.upload_file(f"{user_id}/model/cosyvoice/{exp_name}.pt",
+            aliyun_oss.upload_file(f"learn-wave/{user_id}/model/cosyvoice/{exp_name}.pt",
                                    f"{ROOT_DIR}/{file_path}/{exp_name}.pt")
             delete_all_files_in_folder(f"{ROOT_DIR}/{file_path}")
             last_index_ = audio_file.rfind('/')
@@ -182,7 +183,7 @@ def generate_audio(mode, tts_text, spk_id, spk_customize, prompt_text, prompt_sp
                     buffer = io.BytesIO()
                     tts_speeches.append(j['tts_speech'])
                     audio_data = torch.concat(tts_speeches, dim=1)
-                    torchaudio.save(buffer, audio_data, target_sr, format="ogg")
+                    torchaudio.save(buffer, audio_data, target_sr, format="mp3")
                     buffer.seek(0)
                     yield buffer.read()
                 last_index_ = audio_file.rfind('/')
@@ -190,9 +191,9 @@ def generate_audio(mode, tts_text, spk_id, spk_customize, prompt_text, prompt_sp
                 delete_all_files_in_folder(del_file_)
 
             response = make_response(generate())
-            response.headers['Content-Type'] = 'audio/ogg'
+            response.headers['Content-Type'] = 'audio/mpeg'
             # response.headers['Content-Disposition'] = 'attachment; filename=sound.ogg'
-            response.headers['Content-Disposition'] = 'inline; filename=sound.ogg'
+            response.headers['Content-Disposition'] = 'inline; filename=sound.mp3'
             return response
         else:
             buffer = io.BytesIO()
@@ -207,9 +208,9 @@ def generate_audio(mode, tts_text, spk_id, spk_customize, prompt_text, prompt_sp
             delete_all_files_in_folder(del_file_)
             return Response(buffer.read(), mimetype="audio/wav")
     elif mode == '自然语言控制':
-        if not os.path.exists(f"{ROOT_DIR}/output/{user_id}/{exp_name}.pt"):
-            aliyun_oss.download_file(f"{user_id}/model/cosyvoice/{exp_name}.pt",
-                                     f"{ROOT_DIR}/output/{user_id}/{exp_name}.pt")
+        if not os.path.exists(f"{ROOT_DIR}/output/{user_id}/{spk_customize}.pt"):
+            aliyun_oss.download_file(f"learn-wave/{user_id}/model/cosyvoice/{spk_customize}.pt",
+                                     f"{ROOT_DIR}/output/{user_id}/{spk_customize}.pt")
         if stream:
             def generate():
                 for i, j in enumerate(
@@ -219,15 +220,15 @@ def generate_audio(mode, tts_text, spk_id, spk_customize, prompt_text, prompt_sp
                     buffer = io.BytesIO()
                     tts_speeches.append(j['tts_speech'])
                     audio_data = torch.concat(tts_speeches, dim=1)
-                    torchaudio.save(buffer, audio_data, target_sr, format="ogg")
+                    torchaudio.save(buffer, audio_data, target_sr, format="mp3")
                     buffer.seek(0)
                     yield buffer.read()
                 delete_all_files_in_folder(f"{ROOT_DIR}/output/{user_id}")
 
             response = make_response(generate())
-            response.headers['Content-Type'] = 'audio/ogg'
+            response.headers['Content-Type'] = 'audio/mpeg'
             # response.headers['Content-Disposition'] = 'attachment; filename=sound.ogg'
-            response.headers['Content-Disposition'] = 'inline; filename=sound.ogg'
+            response.headers['Content-Disposition'] = 'inline; filename=sound.mp3'
             return response
         else:
             buffer = io.BytesIO()

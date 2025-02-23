@@ -101,8 +101,6 @@ class CosyVoice:
 
                 model_input = self.frontend.frontend_sft(i, "中文女")
 
-                print({grandparent_dir})
-
                 if new_dropdown != "无":
                    if user_id == "":
                      newspk = torch.load(f'{grandparent_dir}/voices/{new_dropdown}.pt')
