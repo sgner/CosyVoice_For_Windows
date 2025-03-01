@@ -206,7 +206,7 @@ if __name__ == '__main__':
     # download_dir = download_list_file("user_id_test/workspace/slice_workspace/process_id/upload/")
     # "user_id_test/workspace/slice_workspace/process_id/upload/"
     # print("download_dir:" + clean_path(download_dir))
-    upload_file('1881589559783981057/audio/cosyvoice/process_id/所以，非常感谢我伟大的妈妈，通过滑雪呢，我落这个幺六二零动作的时候是我人生感觉最美最自信的一刻.wav', "E:\\gptov\\GPT-SoVITS\\model\\GU\\所以，非常感谢我伟大的妈妈，通过滑雪呢，我落这个幺六二零动作的时候是我人生感觉最美最自信的一刻.wav")
+    upload_file('learn-wave/1881589559783981057/workspace/asr_workspace/AApncHQtc292aXRzAA0xNzQwMTUzNDY4Nzc3AAZ1c2VyMDIAEzE4OTAxMDg5MDg1MzA1NTY5MzA/upload/',"C:\\Users\\25315\\Music\\vocal_pdx.mp4.reformatted.wav_10.wav")
     # upload_list_file("E:\\test-oss\\user_id_test\\workspace\\uvr5_workspace\\process_id\\vocal")
     # 3. 下载文件txt')
     # #     # 4. 列出Bucket中的对象
