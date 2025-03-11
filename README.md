@@ -1,6 +1,7 @@
 # CosyVoice-25hz
  项目原地址：https://github.com/FunAudioLLM/CosyVoice.git
  刘悦的技术博客整合版原地址：https://github.com/v3ucn/CosyVoice_For_Windows.git
+ learnWave项目地址： 后端 https://gitee.com/sgner/LearnWave-EduSynth-System.git 前端 https://gitee.com/sgner/learn-wave.git
 # API 文档 - 音频生成接口
 
 本文档为 CosyVoice 项目封装的音频生成 API，通过指定不同的模式（mode）来实现多种语音合成功能。该接口利用阿里云 OSS 实现用户资源的下载和上传，支持流式传输和非流式输出。
